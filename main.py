@@ -3,12 +3,17 @@ import sys
 import shutil
 
 # CONSTANT
-IMAGE = ['JPEG', 'PNG', 'JPG', 'SVG']
-VIDEO = ['AVI', 'MP4', 'MOV', 'MKV']
-DOCS = ['DOC', 'DOCX', 'TXT', 'PDF', 'XLSX', 'PPTX']
-MUSIC = ['MP3', 'OGG', 'WAV', 'AMR']
-ARCHIVE = ['ZIP', 'GZ', 'TAR']
-
+IMAGE = ['jpeg', 'png', 'jpg', 'svg']
+VIDEO = ['avt', 'mp4', 'mov', 'mkv']
+DOCS = ['doc', 'docx', 'txt', 'pdf', 'xlsx', 'pptx']
+MUSIC = ['mp3', 'ogg', 'wav', 'amr']
+ARCHIVE = ['zip', 'gz', 'tar','7z']
+NOT_OTHER = []
+NOT_OTHER.extend(VIDEO)
+NOT_OTHER.extend(IMAGE)
+NOT_OTHER.extend(DOCS)
+NOT_OTHER.extend(MUSIC)
+NOT_OTHER.extend(ARCHIVE)
 
 # Parent Directory path
 sorted_path = sys.argv[1]
@@ -34,29 +39,75 @@ def deep_folders(adress):
             try: 
                 shutil.move(way,sorted_path)
             except: 
-                print(f"file {way} already exist")
                 os.remove(way)
     del_empty_dirs(adress)
 
 
 def sort_Image():
-    pass
+    image_folder_dir = os.path.join(sorted_path,'IMAGE')
+    os.mkdir(image_folder_dir)
+
+    for el in os.listdir(sorted_path):
+        ext = el.split('.')[-1]
+        if ext in IMAGE:
+            shutil.move(os.path.join(sorted_path,el),image_folder_dir)
+
 
 def sort_Video():
-    pass
+    video_folder_dir = os.path.join(sorted_path,'VIDEO')
+    os.mkdir(video_folder_dir)
+
+    for el in os.listdir(sorted_path):
+        ext = el.split('.')[-1]
+        if ext in VIDEO:
+            shutil.move(os.path.join(sorted_path,el),video_folder_dir)
 
 def sort_Docs():
-    pass
+    docs_folder_dir = os.path.join(sorted_path,'DOCS')
+    os.mkdir(docs_folder_dir)
+
+    for el in os.listdir(sorted_path):
+        ext = el.split('.')[-1]
+        if ext in DOCS:
+            shutil.move(os.path.join(sorted_path,el),docs_folder_dir)
 
 def sort_Music():
-    pass
+    music_folder_dir = os.path.join(sorted_path,'MUSIC')
+    os.mkdir(music_folder_dir)
+
+    for el in os.listdir(sorted_path):
+        ext = el.split('.')[-1]
+        if ext in MUSIC:
+            shutil.move(os.path.join(sorted_path,el),music_folder_dir)
 
 def sort_Archive():
-    pass
+    archive_folder_dir = os.path.join(sorted_path,'ARCHIVE')
+    os.mkdir(archive_folder_dir)
+
+    for el in os.listdir(sorted_path):
+        ext = el.split('.')[-1]
+        if ext in ARCHIVE:
+            shutil.move(os.path.join(sorted_path,el),archive_folder_dir)
 
 def sort_Other():
-    pass
+    other_folder_dir = os.path.join(sorted_path,'OTHER')
+    os.mkdir(other_folder_dir)
+
+    for el in os.listdir(sorted_path):
+        ext = el.split('.')[-1]
+        if ext not in NOT_OTHER :
+            shutil.move(os.path.join(sorted_path,el),other_folder_dir)
 
                 
+def main():
+    deep_folders(sorted_path)
+    sort_Image()
+    sort_Video()
+    sort_Docs()
+    sort_Music()
+    sort_Archive()
+    sort_Other()
 
-deep_folders(sorted_path)
+
+
+main()
