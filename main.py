@@ -16,6 +16,17 @@ NOT_OTHER.extend(MUSIC)
 NOT_OTHER.extend(ARCHIVE)
 IGNORE = ['.DS_Store']
 
+# Parent Directory path
+
+sorted_path = sys.argv[1]
+
+image_folder_dir = os.path.join(sorted_path,'IMAGE')
+archive_folder_dir = os.path.join(sorted_path,'ARCHIVE')
+video_folder_dir = os.path.join(sorted_path,'VIDEO')
+docs_folder_dir = os.path.join(sorted_path,'DOCS')
+music_folder_dir = os.path.join(sorted_path,'MUSIC')
+other_folder_dir = os.path.join(sorted_path,'OTHER')
+
 
 translate_dict = {'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'yo',
       'ж':'zh','з':'z','и':'i','й':'i','к':'k','л':'l','м':'m','н':'n',
@@ -28,9 +39,6 @@ translate_dict = {'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'yo
       'Ю':'U','Я':'YA','ґ':'','ї':'', 'є':'','Ґ':'g','Ї':'i',
       'Є':'e','1':'1','2':'2','3':'3'}
 
-# Parent Directory path
-
-sorted_path = sys.argv[1]
 
 # Print list of file by category
 def file_list_by_folder():
@@ -98,23 +106,24 @@ def deep_folders(root_folder):
         del_empty_dirs(root_folder)
 
 
+# Create category folders 
+def create_sort_folders():
+    if not "IMAGE" in os.listdir():
+        os.mkdir(image_folder_dir)
+    if not "VIDEO" in os.listdir():
+        os.mkdir(video_folder_dir)
+    if not "DOCS" in os.listdir():
+        os.mkdir(docs_folder_dir)
+    if not "MUSIC" in os.listdir():
+        os.mkdir(music_folder_dir)
+    if not "OTHER" in os.listdir():
+        os.mkdir(other_folder_dir)
+    if not "ARCHIVE" in os.listdir():
+        os.mkdir(archive_folder_dir)
+
 
 # Sorting
 def sort():
-    image_folder_dir = os.path.join(sorted_path,'IMAGE')
-    archive_folder_dir = os.path.join(sorted_path,'ARCHIVE')
-    video_folder_dir = os.path.join(sorted_path,'VIDEO')
-    docs_folder_dir = os.path.join(sorted_path,'DOCS')
-    music_folder_dir = os.path.join(sorted_path,'MUSIC')
-    other_folder_dir = os.path.join(sorted_path,'OTHER')
-
-    os.mkdir(image_folder_dir)
-    os.mkdir(video_folder_dir)
-    os.mkdir(docs_folder_dir)
-    os.mkdir(music_folder_dir)
-    os.mkdir(other_folder_dir)
-    os.mkdir(archive_folder_dir)
-
     for el in os.listdir(sorted_path):
         if os.path.isfile(os.path.join(sorted_path, el)):
             ext = el.split('.')[-1]
@@ -140,6 +149,7 @@ def main():
     with_ext = create_ext_set()
     without_ext = create_un_ext_set()
     normalize()
+    create_sort_folders()
     sort()
     file_list_by_folder()
     print('{:^100}'.format('*'*100))
