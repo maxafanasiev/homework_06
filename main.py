@@ -99,76 +99,39 @@ def deep_folders(root_folder):
 
 
 
-#Sorting image by extension
-def sort_Image():
+# Sorting
+def sort():
     image_folder_dir = os.path.join(sorted_path,'IMAGE')
-    os.mkdir(image_folder_dir)
-    for el in os.listdir(sorted_path):
-        if os.path.isfile(os.path.join(sorted_path, el)):
-            ext = el.split('.')[-1]
-            if ext in IMAGE and not ext in IGNORE:
-                shutil.move(os.path.join(sorted_path,el),image_folder_dir)
-
-
-#Sorting video by extension
-def sort_Video():
-    video_folder_dir = os.path.join(sorted_path,'VIDEO')
-    os.mkdir(video_folder_dir)
-
-    for el in os.listdir(sorted_path):
-        if os.path.isfile(os.path.join(sorted_path, el)):
-            ext = el.split('.')[-1]
-            if ext in VIDEO and not ext in IGNORE:
-                shutil.move(os.path.join(sorted_path,el),video_folder_dir)
-
-
-#Sorting doc's by extension
-def sort_Docs():
-    docs_folder_dir = os.path.join(sorted_path,'DOCS')
-    os.mkdir(docs_folder_dir)
-
-    for el in os.listdir(sorted_path):
-        if os.path.isfile(os.path.join(sorted_path, el)):
-            ext = el.split('.')[-1]
-            if ext in DOCS and not ext in IGNORE:
-                shutil.move(os.path.join(sorted_path,el),docs_folder_dir)
-
-
-#Sorting music by extension
-def sort_Music():
-    music_folder_dir = os.path.join(sorted_path,'MUSIC')
-    os.mkdir(music_folder_dir)
-
-    for el in os.listdir(sorted_path):
-        if os.path.isfile(os.path.join(sorted_path, el)):
-            ext = el.split('.')[-1]
-            if ext in MUSIC and not ext in IGNORE:
-                shutil.move(os.path.join(sorted_path,el),music_folder_dir)
-
-
-#Unpack and sorting archive
-def sort_Archive():
     archive_folder_dir = os.path.join(sorted_path,'ARCHIVE')
+    video_folder_dir = os.path.join(sorted_path,'VIDEO')
+    docs_folder_dir = os.path.join(sorted_path,'DOCS')
+    music_folder_dir = os.path.join(sorted_path,'MUSIC')
+    other_folder_dir = os.path.join(sorted_path,'OTHER')
+
+    os.mkdir(image_folder_dir)
+    os.mkdir(video_folder_dir)
+    os.mkdir(docs_folder_dir)
+    os.mkdir(music_folder_dir)
+    os.mkdir(other_folder_dir)
     os.mkdir(archive_folder_dir)
 
     for el in os.listdir(sorted_path):
         if os.path.isfile(os.path.join(sorted_path, el)):
             ext = el.split('.')[-1]
-            if ext in ARCHIVE and not ext in IGNORE:
+            if ext in IMAGE and not ext in IGNORE:
+                shutil.move(os.path.join(sorted_path,el),image_folder_dir)
+            elif ext in VIDEO and not ext in IGNORE:
+                shutil.move(os.path.join(sorted_path,el),video_folder_dir)
+            elif ext in DOCS and not ext in IGNORE:
+                shutil.move(os.path.join(sorted_path,el),docs_folder_dir)
+            elif ext in MUSIC and not ext in IGNORE:
+                shutil.move(os.path.join(sorted_path,el),music_folder_dir)
+            elif ext in ARCHIVE and not ext in IGNORE:
                 shutil.unpack_archive( os.path.join(sorted_path, el), archive_folder_dir)
                 os.remove(os.path.join(sorted_path,el))
-
-
-#Sorting other by extension
-def sort_Other():
-    other_folder_dir = os.path.join(sorted_path,'OTHER')
-    os.mkdir(other_folder_dir)
-
-    for el in os.listdir(sorted_path):
-        if os.path.isfile(os.path.join(sorted_path, el)):
-            ext = el.split('.')[-1]
-            if not ext in IGNORE and not ext in NOT_OTHER:
+            else:
                 shutil.move(os.path.join(sorted_path,el),other_folder_dir)
+
 
 
 #Main function
@@ -177,12 +140,7 @@ def main():
     with_ext = create_ext_set()
     without_ext = create_un_ext_set()
     normalize()
-    sort_Image()
-    sort_Video()
-    sort_Docs()
-    sort_Music()
-    sort_Archive()
-    sort_Other()
+    sort()
     file_list_by_folder()
     print('{:^100}'.format('*'*100))
     print(f"Founded file's with know extension: {with_ext}")
