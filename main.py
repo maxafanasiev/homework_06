@@ -3,29 +3,16 @@ import sys
 import shutil
 
 # CONSTANT
-IMAGE = ['jpeg', 'png', 'jpg', 'svg']
-VIDEO = ['avt', 'mp4', 'mov', 'mkv']
-DOCS = ['doc', 'docx', 'txt', 'pdf', 'xlsx', 'pptx','rtf']
-MUSIC = ['mp3', 'ogg', 'wav', 'amr']
-ARCHIVE = ['zip', 'gz', 'tar','7z']
-NOT_OTHER = []
-NOT_OTHER.extend(VIDEO)
-NOT_OTHER.extend(IMAGE)
-NOT_OTHER.extend(DOCS)
-NOT_OTHER.extend(MUSIC)
-NOT_OTHER.extend(ARCHIVE)
+CATEGORIES = dict(IMAGE = ['jpeg', 'png', 'jpg', 'svg'], 
+                  VIDEO = ['avt', 'mp4', 'mov', 'mkv'],
+                  DOCS = ['doc', 'docx', 'txt', 'pdf', 'xlsx', 'pptx','rtf'],
+                  MUSIC = ['mp3', 'ogg', 'wav', 'amr'],
+                  ARCHIVE = ['zip', 'gz', 'tar','7z'],
+                  OTHER = [])
 IGNORE = ['.DS_Store']
 
 # Parent Directory path
-
 sorted_path = sys.argv[1]
-
-image_folder_dir = os.path.join(sorted_path,'IMAGE')
-archive_folder_dir = os.path.join(sorted_path,'ARCHIVE')
-video_folder_dir = os.path.join(sorted_path,'VIDEO')
-docs_folder_dir = os.path.join(sorted_path,'DOCS')
-music_folder_dir = os.path.join(sorted_path,'MUSIC')
-other_folder_dir = os.path.join(sorted_path,'OTHER')
 
 
 translate_dict = {'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'yo',
@@ -71,7 +58,7 @@ def create_ext_set():
     ext_set = set()
     for el in os.listdir(sorted_path):
         ext = el.split('.')[-1]
-        if os.path.isfile(os.path.join(sorted_path,el)) and ext in NOT_OTHER:
+        if os.path.isfile(os.path.join(sorted_path,el)) and ext in str(CATEGORIES.values()):
             ext_set.add(ext)
     return ext_set
 
@@ -81,7 +68,7 @@ def create_un_ext_set():
     ext_set = set()
     for el in os.listdir(sorted_path):
         ext = el.split('.')[-1]
-        if os.path.isfile(os.path.join(sorted_path,el)) and ext not in NOT_OTHER:
+        if os.path.isfile(os.path.join(sorted_path,el)) and ext not in str(CATEGORIES.values()):
             ext_set.add(ext)
     return ext_set
 
@@ -107,40 +94,30 @@ def deep_folders(root_folder):
 
 
 # Create category folders 
-def create_sort_folders():
-    if not "IMAGE" in os.listdir():
-        os.mkdir(image_folder_dir)
-    if not "VIDEO" in os.listdir():
-        os.mkdir(video_folder_dir)
-    if not "DOCS" in os.listdir():
-        os.mkdir(docs_folder_dir)
-    if not "MUSIC" in os.listdir():
-        os.mkdir(music_folder_dir)
-    if not "OTHER" in os.listdir():
-        os.mkdir(other_folder_dir)
-    if not "ARCHIVE" in os.listdir():
-        os.mkdir(archive_folder_dir)
+def create_sort_folders(sorted_path):
+    for category in CATEGORIES:
+        if category not in os.listdir():
+            os.mkdir(os.path.join(sorted_path, category))
 
+
+def get_category(ext):
+    for category, extinsions in CATEGORIES.items():
+        if ext in extinsions and ext not in IGNORE:
+            return category
+    return "OTHER"
 
 # Sorting
-def sort():
+def sort(sorted_path):
     for el in os.listdir(sorted_path):
         if os.path.isfile(os.path.join(sorted_path, el)):
             ext = el.split('.')[-1]
-            if ext in IMAGE and not ext in IGNORE:
-                shutil.move(os.path.join(sorted_path,el),image_folder_dir)
-            elif ext in VIDEO and not ext in IGNORE:
-                shutil.move(os.path.join(sorted_path,el),video_folder_dir)
-            elif ext in DOCS and not ext in IGNORE:
-                shutil.move(os.path.join(sorted_path,el),docs_folder_dir)
-            elif ext in MUSIC and not ext in IGNORE:
-                shutil.move(os.path.join(sorted_path,el),music_folder_dir)
-            elif ext in ARCHIVE and not ext in IGNORE:
-                shutil.unpack_archive( os.path.join(sorted_path, el), archive_folder_dir)
+            category = get_category(ext)
+            target_folder = os.path.join(sorted_path, category)
+            if category == "ARCHIVE":
+                shutil.unpack_archive( os.path.join(sorted_path, el), target_folder)
                 os.remove(os.path.join(sorted_path,el))
-            else:
-                shutil.move(os.path.join(sorted_path,el),other_folder_dir)
-
+                continue
+            shutil.move(os.path.join(sorted_path,el), target_folder)
 
 
 #Main function
@@ -149,12 +126,14 @@ def main():
     with_ext = create_ext_set()
     without_ext = create_un_ext_set()
     normalize()
-    create_sort_folders()
-    sort()
+    create_sort_folders(sorted_path)
+    sort(sorted_path)
     file_list_by_folder()
     print('{:^100}'.format('*'*100))
     print(f"Founded file's with know extension: {with_ext}")
     print(f"Founded file's with unknown extension: {without_ext}")
     print('{:^100}'.format('*'*100))
 
-main()
+
+if __name__ == "__main__" :
+    main()
